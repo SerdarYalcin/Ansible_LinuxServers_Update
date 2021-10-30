@@ -3,7 +3,7 @@ Update CentOS/RedHat and Ubuntu/Debian base servers if the servers have bigger t
 
 ## Usage
 
-Update hosts, linux._update.yml and linux._update.yml files properly
+Update hosts, linux_update.yml and linux.yml files properly
 
 ``
 Note, if the variable file is in a different location than the default you should define the variable file location in the playbook file
