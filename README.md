@@ -1,5 +1,5 @@
 # Ansible_LinuxServers_Update
-Update CentOS/RedHat and Ubuntu/Debian base servers if the servers have bigger than 5GB sufficient storage space
+Update CentOS/RedHat and Ubuntu/Debian base servers if the servers have bigger than 5GB of sufficient storage space
 
 ## Usage
 
