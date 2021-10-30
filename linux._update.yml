@@ -1,0 +1,52 @@
+---
+
+- hosts: host_group_name
+  become: yes
+  become_user: root
+  become_method: sudo
+  serial: 1 # you can change it according to your needs
+  gather_facts: no
+  ignore_unreachable: yes
+  tasks:
+          - name: "Check Old Kernel Verison"
+            debug:
+                   msg: "{{ ansible_all_ipv4_addresses }} {{ ansible_kernel }}"
+            ignore_errors: yes
+
+          - name: "Check Disk Space"
+            shell: df -h / | grep -v Filesystem|awk '{print $4}' | cut -d G -f1
+            ignore_errors: yes
+            register: disk_space
+            failed_when: disk_space.stdout < 5
+
+          - name: "Show Disk Space"
+            debug:
+                  var: disk_space.stdout_lines
+
+          - name: "Update Patch For CentOS/RedHat"
+            yum:
+                    name: '*'
+                    state: latest
+            failed_when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+            ignore_errors: yes
+            register: kernel_update
+
+          - name: "Reboot CentOS/RedHat"
+            reboot:
+                    reboot_timeout: 70
+            when: kernel_update.changed
+            ignore_errors: yes
+
+          - name: "Update Patch For Debian"
+            apt:
+                    name: '*'
+                    state: latest
+            when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+            ignore_errors: yes
+            register: kernel_update_debian
+
+          - name: "Reboot Debian"
+            reboot:
+                    reboot_timeout: 70
+            when: kernel_update_debian.changed
+            ignore_errors: yes
